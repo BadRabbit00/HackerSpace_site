@@ -1,0 +1,70 @@
+{% extends 'website/base.html' %}
+{% load static %}
+
+{% block title %}Login | BlackIce{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'users/css/login.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <div class="login-card">
+        <h2 class="login-title">Identify Yourself</h2>
+        
+        <div class="login-methods">
+            <!-- Fast Path: Telegram -->
+            <div class="login-method telegram-method">
+                <div class="method-badge">FAST PATH</div>
+                <h3>Telegram Login</h3>
+                <div class="telegram-widget-placeholder">
+                    <script async src="https://telegram.org/js/telegram-widget.js?22" 
+                            data-telegram-login="{{ auth_settings.telegram_bot_name }}" 
+                            data-size="large" 
+                            data-radius="50" 
+                            data-auth-url="{% url 'telegram_login_callback' %}"
+                            data-request-access="write"></script>
+                </div>
+                <p class="method-desc">Instant access. No passwords.</p>
+            </div>
+
+            <div class="divider-vertical">
+                <div class="line"></div>
+                <span>OR</span>
+                <div class="line"></div>
+            </div>
+
+            <!-- Slow Path: Classic -->
+            <div class="login-method classic-method">
+                <div class="method-badge slow">SLOW PATH</div>
+                <h3>Classic Access</h3>
+                
+                <form class="classic-form" method="POST" action="{% url 'login' %}">
+                    {% csrf_token %} {% if form.errors %}
+                        <div style="color: #ff4444; font-size: 0.8rem; margin-bottom: 10px;">
+                            Неверное имя пользователя или пароль
+                        </div>
+                    {% endif %}
+
+                    <div class="form-group">
+                        <input type="text" name="username" placeholder="Username" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" name="password" placeholder="Password" required>
+                    </div>
+                    
+                    <input type="hidden" name="next" value="{{ next }}">
+                    
+                    <button type="submit" class="btn-classic">Enter System</button>
+                </form>
+                
+                <div class="form-footer">
+                    <a href="{% url 'signup' %}">Register</a>
+                    <span class="separator">•</span>
+                    <a href="#">Forgot Password?</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

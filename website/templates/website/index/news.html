@@ -1,0 +1,15 @@
+<!-- News Section -->
+<section class="section" style="background: #080808;">
+    <div class="container">
+        <h2 class="section-title">Новости</h2>
+        <div class="news-grid">
+            {% for news in news_list %}
+            <div class="news-card">
+                <span class="news-date">{{ news.date }}</span>
+                <h3>{{ news.title }}</h3>
+                <p>{{ news.desc }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>

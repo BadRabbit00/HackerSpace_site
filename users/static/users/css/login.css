@@ -1,0 +1,214 @@
+/* Login Page Styles */
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 100px 20px 50px; /* Top padding for fixed header */
+    background: radial-gradient(circle at center, #111 0%, #000 100%);
+}
+
+.login-card {
+    background: #0a0a0a;
+    border: 1px solid #222;
+    border-radius: 12px;
+    padding: 40px;
+    width: 100%;
+    max-width: 900px;
+    box-shadow: 0 0 50px rgba(0,0,0,0.8);
+    position: relative;
+    overflow: hidden;
+}
+
+.login-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+}
+
+.login-title {
+    text-align: center;
+    margin-bottom: 40px;
+    font-size: 2rem;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(255,255,255,0.3);
+}
+
+.login-methods {
+    display: flex;
+    gap: 40px;
+    align-items: stretch;
+}
+
+.login-method {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    border-radius: 8px;
+    transition: 0.3s;
+    position: relative;
+}
+
+.login-method:hover {
+    background: rgba(255,255,255,0.02);
+}
+
+.method-badge {
+    background: var(--accent-color);
+    color: #000;
+    font-size: 0.7rem;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    box-shadow: 0 0 10px var(--accent-glow);
+}
+
+.method-badge.slow {
+    background: #333;
+    color: #888;
+    box-shadow: none;
+}
+
+.login-method h3 {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+}
+
+.method-subtitle {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 30px;
+}
+
+/* Telegram Button */
+.btn-telegram {
+    background: #24A1DE;
+    color: #fff;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: 0.3s;
+    box-shadow: 0 5px 15px rgba(36, 161, 222, 0.3);
+}
+
+.btn-telegram:hover {
+    background: #1f8bbd;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(36, 161, 222, 0.5);
+}
+
+.method-desc {
+    margin-top: 20px;
+    font-size: 0.85rem;
+    color: var(--accent-color);
+}
+
+/* Divider */
+.divider-vertical {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #444;
+    font-weight: bold;
+    font-size: 0.8rem;
+}
+
+.divider-vertical .line {
+    width: 1px;
+    height: 100px;
+    background: #222;
+    margin: 10px 0;
+}
+
+/* Classic Form */
+.classic-form {
+    width: 100%;
+    max-width: 300px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 4px;
+    color: #fff;
+    font-family: 'Roboto', sans-serif;
+    transition: 0.3s;
+}
+
+.form-group input:focus {
+    border-color: var(--accent-color);
+    outline: none;
+    box-shadow: 0 0 10px rgba(77, 255, 0, 0.1);
+}
+
+.btn-classic {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    border: 1px solid #444;
+    color: #aaa;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: 0.3s;
+    font-weight: bold;
+}
+
+.btn-classic:hover {
+    border-color: #fff;
+    color: #fff;
+    background: rgba(255,255,255,0.05);
+}
+
+.form-footer {
+    margin-top: 20px;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.form-footer a:hover {
+    color: var(--accent-color);
+}
+
+.separator {
+    margin: 0 5px;
+    color: #444;
+}
+
+@media (max-width: 768px) {
+    .login-methods {
+        flex-direction: column;
+        gap: 30px;
+    }
+    
+    .divider-vertical {
+        flex-direction: row;
+        width: 100%;
+        gap: 10px;
+    }
+    
+    .divider-vertical .line {
+        width: 100%;
+        height: 1px;
+    }
+}

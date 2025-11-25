@@ -1,0 +1,18 @@
+<!-- Hardware Section (Carousel) -->
+<section class="section">
+    <div class="container">
+        <h2 class="section-title">Наше Оборудование</h2>
+        <div class="carousel-container">
+            <button class="carousel-btn prev" id="prevBtn">&#10094;</button>
+            <div class="carousel-track" id="track">
+                {% for item in hardware_list %}
+                <div class="card">
+                    <h3>{{ item }}</h3>
+                    <p>Доступно для резидентов</p>
+                </div>
+                {% endfor %}
+            </div>
+            <button class="carousel-btn next" id="nextBtn">&#10095;</button>
+        </div>
+    </div>
+</section>

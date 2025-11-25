@@ -1,0 +1,20 @@
+{% if user.is_authenticated %}
+<li class="user-menu-container">
+    <div class="user-avatar" id="userAvatarBtn">
+        <!-- Placeholder for user avatar, using first letter of username -->
+        {{ user.username|make_list|first|upper }}
+    </div>
+    <div class="dropdown-menu" id="userDropdown">
+        <div class="dropdown-header">
+            <strong>{{ user.username }}</strong>
+        </div>
+        <a href="#" class="dropdown-item">Профиль</a>
+        <a href="#" class="dropdown-item">Мои проекты</a>
+        <a href="#" class="dropdown-item">Настройки</a>
+        <div class="dropdown-divider"></div>
+        <a href="#" class="dropdown-item text-danger">Выйти</a>
+    </div>
+</li>
+{% else %}
+<li><a href="{% url 'login' %}" class="btn-login">Войти</a></li>
+{% endif %}

@@ -1,0 +1,10 @@
+{% extends 'website/base.html' %}
+
+{% block content %}
+<div style="padding: 50px; text-align: center; color: white;">
+    <h1>Welcome to the Dashboard, {{ user.username }}!</h1>
+    <p>You have successfully authenticated and linked your Telegram account.</p>
+    <p>Telegram ID: {{ user.telegram_id }}</p>
+    <a href="{% url 'logout' %}" style="color: #00ff9d;">Logout</a>
+</div>
+{% endblock %}

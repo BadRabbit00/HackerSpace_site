@@ -69,12 +69,23 @@ nav ul {
     display: flex;
     list-style: none;
     gap: 30px;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+nav li {
+    display: flex;
+    align-items: center;
 }
 
 nav a {
     font-size: 0.9rem;
     font-weight: 700;
     position: relative;
+    display: flex;
+    align-items: center;
+    height: 100%;
 }
 
 nav a:hover {
@@ -397,6 +408,94 @@ footer {
     to {
         text-shadow: 0 0 20px rgba(77, 255, 0, 0.6), 0 0 10px rgba(77, 255, 0, 0.4);
     }
+}
+
+/* User Menu & Dropdown */
+.user-menu-container {
+    position: relative;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    background: var(--card-bg);
+    border: 1px solid var(--accent-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent-color);
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    user-select: none;
+}
+
+.user-avatar:hover {
+    box-shadow: 0 0 10px var(--accent-glow);
+    background: var(--accent-color);
+    color: var(--bg-color);
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 120%;
+    right: 0;
+    background: var(--card-bg);
+    border: 1px solid #333;
+    border-radius: 8px;
+    width: 200px;
+    display: none;
+    flex-direction: column;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    z-index: 1001;
+    overflow: hidden;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.dropdown-menu.show {
+    display: flex;
+}
+
+.dropdown-header {
+    padding: 15px;
+    border-bottom: 1px solid #222;
+    color: #fff;
+    font-size: 0.9rem;
+}
+
+.dropdown-item {
+    padding: 12px 15px;
+    color: #aaa;
+    font-size: 0.9rem;
+    transition: 0.2s;
+    display: block;
+}
+
+.dropdown-item:hover {
+    background: rgba(77, 255, 0, 0.1);
+    color: var(--accent-color);
+    padding-left: 20px;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: #222;
+    margin: 5px 0;
+}
+
+.text-danger {
+    color: #ff4d4d;
+}
+
+.text-danger:hover {
+    color: #ff0000;
+    background: rgba(255, 0, 0, 0.1);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 @media (max-width: 768px) {

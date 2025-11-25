@@ -1,19 +1,10 @@
 from django.shortcuts import render
 
 def index(request):
-    # Здесь ты будешь получать данные из своей модели
-    # Например: 
-    # info = HackerSpaceInfo.objects.first()
-    # context = {
-    #     'address': info.address,
-    #     'residents_count': info.residents_count,
-    #     ...
-    # }
+    # Данные об адресе и количестве резидентов теперь берутся из context_processors.py
     
-    # Пока используем заглушки для демонстрации
+    # Пока используем заглушки для новостей и оборудования
     context = {
-        'address': 'г. Алматы, ул. Байзакова, 280, Smart Point',
-        'residents_count': 42,
         'news_list': [
             {
                 'title': 'Открытие сезона мастер-классов',
@@ -44,4 +35,4 @@ def index(request):
             'Many More+'
         ]
     }
-    return render(request, 'index.html', context)
+    return render(request, 'website/index.html', context)

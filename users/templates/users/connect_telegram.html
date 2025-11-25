@@ -1,0 +1,35 @@
+{% extends 'website/base.html' %}
+{% load static %}
+
+{% block title %}Connect Telegram | BlackIce{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'users/css/login.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <div class="login-card" style="max-width: 500px;"> <h2 class="login-title">Final Step</h2>
+        <p class="method-subtitle" style="text-align: center;">
+            System requires Telegram verification to access account features.
+        </p>
+
+        <div class="login-method telegram-method" style="border: none;">
+            <div class="method-badge">REQUIRED</div>
+            
+            <script async src="https://telegram.org/js/telegram-widget.js?22" 
+                    data-telegram-login="{{ auth_settings.telegram_bot_name }}" 
+                    data-size="large" 
+                    data-radius="50" 
+                    data-auth-url="{% url 'link_telegram_callback' %}" 
+                    data-request-access="write"></script>
+                    
+            <p class="method-desc">Connect your account to proceed.</p>
+        </div>
+        
+        <div class="form-footer" style="text-align: center; margin-top: 20px;">
+            <a href="{% url 'logout' %}">Cancel & Logout</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
