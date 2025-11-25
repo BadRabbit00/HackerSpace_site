@@ -136,6 +136,7 @@ nav a:hover::after {
     font-size: 4rem;
     margin-bottom: 20px;
     background: linear-gradient(90deg, #fff, var(--accent-color));
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: glow 2s ease-in-out infinite alternate;
