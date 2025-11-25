@@ -1,0 +1,120 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlackIce HackerSpace | Almaty</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    
+    <!-- Navigation -->
+    <header>
+        <div class="brand">
+            <img src="{% static 'img/logo.svg' %}" alt="BlackIce Logo" class="brand-logo">
+            BlackIce<span class="cursor">_</span>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#">Форум</a></li> <!-- Будет реализовано позже -->
+                <li><a href="#" class="btn-login">Личный кабинет</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>BlackIce HackerSpace</h1>
+        <p>Первый хакерспейс в Средней Азии. Создавай. Изучай. Взламывай (в рамках закона).</p>
+        <button class="hero-btn">Стать резидентом</button>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="section stats">
+        <div class="stat-item">
+            <span class="stat-number">{{ residents_count }}</span>
+            <span class="stat-label">Резидентов</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">24/7</span>
+            <span class="stat-label">Доступ</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">∞</span>
+            <span class="stat-label">Идей</span>
+        </div>
+    </section>
+
+    <!-- What is HackerSpace Section -->
+    <section class="section about-section">
+        <div class="container">
+            <h2 class="section-title">Что такое Хакерспейс?</h2>
+            <div style="max-width: 800px; margin: 0 auto; text-align: center;">
+                <p class="about-text">
+                    <span class="about-highlight">Хакерспейс</span> — это физическое место, где люди со схожими интересами в области технологий, науки, цифрового искусства и электронного творчества могут встречаться, общаться и работать над совместными проектами.
+                </p>
+                <p class="about-text">
+                    В <span class="about-highlight">BlackIce</span> мы предоставляем пространство, оборудование и сообщество для реализации ваших самых смелых идей. От пайки микросхем до разработки ПО, от 3D-печати до кибербезопасности — здесь вы найдете единомышленников.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- News Section -->
+    <section class="section" style="background: #080808;">
+        <div class="container">
+            <h2 class="section-title">Новости</h2>
+            <div class="news-grid">
+                {% for news in news_list %}
+                <div class="news-card">
+                    <span class="news-date">{{ news.date }}</span>
+                    <h3>{{ news.title }}</h3>
+                    <p>{{ news.desc }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Hardware Section (Carousel) -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Наше Оборудование</h2>
+            <div class="carousel-container">
+                <button class="carousel-btn prev" id="prevBtn">&#10094;</button>
+                <div class="carousel-track" id="track">
+                    {% for item in hardware_list %}
+                    <div class="card">
+                        <h3>{{ item }}</h3>
+                        <p>Доступно для резидентов</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                <button class="carousel-btn next" id="nextBtn">&#10095;</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- About / Community Section -->
+    <section class="section" style="background: #080808;">
+        <div class="container" style="text-align: center;">
+            <h2 class="section-title">Сообщество</h2>
+            <p style="max-width: 700px; margin: 0 auto; color: #aaa; font-size: 1.1rem;">
+                У нас собираются умные люди, инженеры, программисты и энтузиасты. 
+                Мы делимся знаниями, работаем над совместными проектами и развиваем культуру мейкерства в Казахстане.
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-info">
+            <p><strong>Адрес:</strong> {{ address }}</p>
+            <p>&copy; 2025 BlackIce HackerSpace. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

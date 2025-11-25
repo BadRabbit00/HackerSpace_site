@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    command: gunicorn HackerSpace.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - .:/app
+    expose:
+      - 8000
+    env_file:
+      - .env
+    # depends_on removed to allow flexible profile usage (sqlite/postgres/redis combinations)
+    # The entrypoint script handles waiting for the database if configured.
+
+  nginx:
+    image: nginx:1.25-alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - static_volume:/app/staticfiles
+      - media_volume:/app/mediafiles
+    depends_on:
+      - web
+
+  db:
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=hello_django
+      - POSTGRES_PASSWORD=hello_django
+      - POSTGRES_DB=hello_django_dev
+    profiles:
+      - postgres
+      - full
+
+  redis:
+    image: redis:7-alpine
+    profiles:
+      - redis
+      - full
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
