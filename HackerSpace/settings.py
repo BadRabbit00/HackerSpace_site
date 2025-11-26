@@ -25,6 +25,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY", 'django-insecure-g)0ca_xsmillbhkb88st-
 
 # Telegram Bot Token
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
+TELEGRAM_BOT_NAME = os.environ.get("TELEGRAM_BOT_NAME", "BlackIceHackerSpaceBot")
 
 # Auth Settings
 TELEGRAM_AUTH_REQUIRED = os.environ.get("TELEGRAM_AUTH_REQUIRED", "True") == "True"

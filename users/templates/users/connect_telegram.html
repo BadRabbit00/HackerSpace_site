@@ -10,6 +10,17 @@
 {% block content %}
 <div class="login-container">
     <div class="login-card" style="max-width: 500px;"> <h2 class="login-title">Final Step</h2>
+        
+        {% if messages %}
+            <div class="messages" style="margin-bottom: 20px;">
+                {% for message in messages %}
+                    <div class="message {{ message.tags }}" style="color: #ff4444; text-align: center; padding: 10px; background: rgba(255, 68, 68, 0.1); border: 1px solid #ff4444; border-radius: 4px;">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
         <p class="method-subtitle" style="text-align: center;">
             System requires Telegram verification to access account features.
         </p>
@@ -18,7 +29,7 @@
             <div class="method-badge">REQUIRED</div>
             
             <script async src="https://telegram.org/js/telegram-widget.js?22" 
-                    data-telegram-login="{{ auth_settings.telegram_bot_name }}" 
+                    data-telegram-login="{{ telegram_bot_name }}" 
                     data-size="large" 
                     data-radius="50" 
                     data-auth-url="{% url 'link_telegram_callback' %}" 

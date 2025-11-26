@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from .models import User
 from .utils import verify_telegram_data
 
@@ -80,7 +81,7 @@ def link_telegram_callback(request):
         
         # Check if this telegram_id is already used by another user
         if User.objects.filter(telegram_id=telegram_id).exclude(id=request.user.id).exists():
-             # In a real app, show an error message. For now, redirect back to connect.
+             messages.error(request, "Этот Telegram аккаунт уже привязан к другому пользователю.")
              return redirect('connect_telegram')
 
         request.user.telegram_id = telegram_id
