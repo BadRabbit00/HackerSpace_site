@@ -2,14 +2,38 @@
 <section class="section" style="background: #080808;">
     <div class="container">
         <h2 class="section-title">Новости</h2>
-        <div class="news-grid">
-            {% for news in news_list %}
-            <div class="news-card">
-                <span class="news-date">{{ news.date }}</span>
-                <h3>{{ news.title }}</h3>
-                <p>{{ news.desc }}</p>
+        
+        <div class="carousel-container" id="news-carousel">
+            <button class="carousel-btn prev" data-target="news-track">&#10094;</button>
+            <div class="carousel-track" id="news-track">
+                {% for news in news_list %}
+                <div class="card news-card" style="min-width: 350px; padding: 0; border: 1px solid #222; background: #0a0a0a;">
+                    {% if news.photo %}
+                    <img src="{{ news.photo.url }}" alt="{{ news.title }}" style="width: 100%; height: 200px; object-fit: cover; border-bottom: 1px solid #222;">
+                    {% endif %}
+                    <div class="news-content" style="padding: 20px;">
+                        <span class="news-date" style="font-size: 0.8rem; color: #666; display: block; margin-bottom: 10px;">
+                            {{ news.published_at|date:"d M Y" }}
+                        </span>
+                        <h3 style="font-family: 'Orbitron', sans-serif; font-size: 1.2rem; color: #fff; margin-bottom: 10px;">
+                            {{ news.title }}
+                        </h3>
+                        <p style="color: #aaa; font-size: 0.95rem; line-height: 1.6;">
+                            {% if news.cards %}
+                                {{ news.cards.description|truncatewords:20 }}
+                            {% else %}
+                                {{ news.content|truncatewords:20 }}
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                {% empty %}
+                <div style="width: 100%; text-align: center; color: #666; padding: 20px;">
+                    Нет свежих новостей.
+                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
+            <button class="carousel-btn next" data-target="news-track">&#10095;</button>
         </div>
     </div>
 </section>

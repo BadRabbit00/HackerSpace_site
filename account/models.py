@@ -6,9 +6,14 @@ from datetime import timedelta
 # 1. Конфигурация тарифов (чтобы менять цены/дни из админки)
 class SubscriptionPlan(models.Model):
     title = models.CharField("Название", max_length=100)
+    description = models.TextField("Описание", max_length=100, blank=True)
     slug = models.SlugField(unique=True) # free, resident_temp, resident_perm
     duration_days = models.PositiveIntegerField("Длительность (дней)", default=30)
     
+    # Две цены
+    price = models.DecimalField("Цена (KZT)", max_digits=10, decimal_places=0, default=0)
+    student_price = models.DecimalField("Цена для студентов (KZT)", max_digits=10, decimal_places=0, null=True, blank=True)
+
     # Флаг: Является ли этот тариф "Резидентским"? 
     # (Например, "Ивент" - это не резиденство)
     grants_resident_status = models.BooleanField(default=True)
@@ -74,3 +79,19 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"Profile of {self.user.username}"
+
+class Payment(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Ожидание'),
+        ('completed', 'Оплачено'),
+        ('failed', 'Ошибка'),
+    ]
+    
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='payments')
+    plan = models.ForeignKey(SubscriptionPlan, on_delete=models.SET_NULL, null=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=0)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"Payment {self.id} - {self.user.username} - {self.amount}"

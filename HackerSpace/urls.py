@@ -16,6 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 from website.views import index
 
 
@@ -24,5 +26,9 @@ urlpatterns = [
     path('users/', include('users.urls')),
     path('account/', include('account.urls')),
     path('inventory/', include('inventory.urls')),
+    path('news/', include('news.urls')),
     path('admin/', admin.site.urls),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

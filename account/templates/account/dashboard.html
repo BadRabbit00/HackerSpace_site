@@ -34,7 +34,7 @@
                     <span>Ends: {{ profile.subscription_end_date }}</span>
                 {% else %}
                     <span class="status-badge status-inactive">No Subscription</span>
-                    <a href="#" class="link-accent">Get Access</a>
+                    <a href="{% url 'pricing' %}" class="link-accent">Get Access</a>
                 {% endif %}
 
                 {% if user.personal_data %}
@@ -43,10 +43,15 @@
                             <span class="status-badge status-active">Verified</span>
                         {% elif user.personal_data.verification_status == 'pending' %}
                             <span class="status-badge status-pending">Pending</span>
+                        {% elif user.personal_data.verification_status == 'not_submitted' %}
+                            <a href="{% url 'upload_documents' %}" class="link-accent">Upload Docs</a>
                         {% else %}
                             <span class="status-badge status-inactive">{{ user.personal_data.get_verification_status_display }}</span>
+                            <a href="{% url 'upload_documents' %}" class="link-accent" style="margin-left: 10px;">Re-upload</a>
                         {% endif %}
                     </span>
+                {% else %}
+                    <span>Docs: <a href="{% url 'upload_documents' %}" class="link-accent">Upload Docs</a></span>
                 {% endif %}
             </div>
         </div>

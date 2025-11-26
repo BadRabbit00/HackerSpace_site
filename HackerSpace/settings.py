@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'account',
     'inventory',
     'events',
+    'news'
 ]
 
 MIDDLEWARE = [
@@ -112,18 +113,22 @@ elif DB_TYPE == "sqlite":
 
 # Cache
 # Redis or LocalMemory
+# По умолчанию пробуем использовать Redis на localhost, если не задано иное
 USE_REDIS = os.environ.get("USE_REDIS", "False") == "True"
 
 if USE_REDIS:
     CACHES = {
         "default": {
             "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": "redis://redis:6379/1",
+            "LOCATION": os.environ.get("REDIS_URL", "redis://127.0.0.1:6379/1"),
             "OPTIONS": {
                 "CLIENT_CLASS": "django_redis.client.DefaultClient",
             }
         }
     }
+    # Храним сессии в Redis для скорости
+    SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+    SESSION_CACHE_ALIAS = "default"
 else:
     CACHES = {
         'default': {

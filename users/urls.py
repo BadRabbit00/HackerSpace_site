@@ -8,4 +8,5 @@ urlpatterns = [
     path('connect-telegram/', views.connect_telegram_view, name='connect_telegram'),
     path('telegram-login/', views.telegram_login_callback, name='telegram_login_callback'),
     path('link-telegram/', views.link_telegram_callback, name='link_telegram_callback'),
+    path('upload-documents/', views.upload_documents, name='upload_documents'),
 ]

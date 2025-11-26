@@ -12,6 +12,7 @@ class User(AbstractUser):
 
 class PersonalData(models.Model):
     STATUS_CHOICES = [
+        ('not_submitted', 'Не подано'),
         ('pending', 'На проверке'),
         ('approved', 'Подтверждено'), # Только этот статус дает право брать вещи
         ('rejected', 'Отклонено'),
@@ -27,7 +28,15 @@ class PersonalData(models.Model):
     document_scan_front = models.FileField("Скан документа (лицевая)", upload_to='docs/private/', blank=True, null=True)
     document_scan_back = models.FileField("Скан документа (обратная)", upload_to='docs/private/', blank=True, null=True)
     
-    verification_status = models.CharField(choices=STATUS_CHOICES, default='pending')
+    # Специфичное поле для студентов
+    student_document = models.ImageField(
+        "Скан студенческого", 
+        upload_to='docs/students/', 
+        null=True, 
+        blank=True
+    )
+
+    verification_status = models.CharField(choices=STATUS_CHOICES, default='not_submitted')
     manager_comment = models.TextField("Коммент менеджера (если отказ)", blank=True)
 
     def __str__(self):

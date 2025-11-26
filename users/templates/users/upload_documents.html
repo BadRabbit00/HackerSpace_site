@@ -1,0 +1,54 @@
+{% extends 'website/base.html' %}
+{% load static %}
+
+{% block title %}Upload Documents | BlackIce{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'users/css/upload_documents.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="upload-container">
+    <div class="upload-header">
+        <h1>Verify Your Identity</h1>
+        <p style="color: #aaa;">Upload your documents to get verified status and student discounts.</p>
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="{{ form.full_name.id_for_label }}">Full Name</label>
+            {{ form.full_name }}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.iin.id_for_label }}">IIN</label>
+            {{ form.iin }}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.address.id_for_label }}">Address</label>
+            {{ form.address }}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.document_scan_front.id_for_label }}">ID Scan (Front)</label>
+            {{ form.document_scan_front }}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.document_scan_back.id_for_label }}">ID Scan (Back)</label>
+            {{ form.document_scan_back }}
+        </div>
+        
+        <div class="form-group border-dashed-top pt-4 mt-4">
+            <label for="{{ form.student_document.id_for_label }}" class="text-accent">Student ID (Optional for Discount)</label>
+            {{ form.student_document }}
+            <small class="text-muted d-block mt-1">Upload this if you want to claim student pricing.</small>
+        </div>
+        
+        <button type="submit" class="btn-submit">Submit for Verification</button>
+    </form>
+</div>
+{% endblock %}

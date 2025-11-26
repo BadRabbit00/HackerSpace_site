@@ -3,8 +3,9 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.conf import settings
-from .models import User
+from .models import User, PersonalData
 from .utils import verify_telegram_data
+from .forms import PersonalDataForm
 
 def logout_view(request):
     logout(request)
@@ -100,3 +101,22 @@ def connect_telegram_view(request):
     if request.user.telegram_id:
         return redirect('home')
     return render(request, 'users/connect_telegram.html')
+
+@login_required
+def upload_documents(request):
+    personal_data, created = PersonalData.objects.get_or_create(user=request.user)
+    
+    if request.method == 'POST':
+        form = PersonalDataForm(request.POST, request.FILES, instance=personal_data)
+        if form.is_valid():
+            personal_data = form.save(commit=False)
+            # If user uploads documents, set status to pending if it was not approved yet
+            if personal_data.verification_status == 'not_submitted' or personal_data.verification_status == 'rejected':
+                personal_data.verification_status = 'pending'
+            personal_data.save()
+            messages.success(request, "Документы загружены и отправлены на проверку.")
+            return redirect('account_dashboard')
+    else:
+        form = PersonalDataForm(instance=personal_data)
+    
+    return render(request, 'users/upload_documents.html', {'form': form})

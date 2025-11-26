@@ -1,0 +1,108 @@
+.pricing-container {
+    padding: 100px 50px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.pricing-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.pricing-header h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 3rem;
+    color: var(--accent-color);
+    margin-bottom: 20px;
+}
+
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.card {
+    background: #0a0a0a;
+    border: 1px solid #222;
+    border-radius: 12px;
+    padding: 30px;
+    transition: 0.3s;
+    display: flex;
+    flex-direction: column;
+}
+
+.card:hover {
+    border-color: var(--accent-color);
+    transform: translateY(-10px);
+}
+
+.card h3 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: #fff;
+}
+
+.price-option {
+    margin-bottom: 20px;
+}
+
+.price {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #fff;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.label {
+    display: block;
+    color: #aaa;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background: var(--accent-color);
+    color: #000;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    background: #fff;
+}
+
+.btn-outline-accent {
+    background: transparent;
+    border: 1px solid var(--accent-color);
+    color: var(--accent-color);
+}
+
+.btn-outline-accent:hover {
+    background: var(--accent-color);
+    color: #000;
+}
+
+.btn-disabled {
+    background: #333;
+    color: #666;
+    cursor: not-allowed;
+}
+
+.btn-disabled:hover {
+    background: #333;
+}
+
+.student-option {
+    border-top: 1px dashed #333;
+    margin-top: 20px;
+    padding-top: 20px;
+}

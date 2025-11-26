@@ -1,12 +1,6 @@
 from django.core.cache import cache
 from .models import SiteSettings
-
-# Заглушка для модели резидентов (пока не создана)
-class Resident:
-    class objects:
-        @staticmethod
-        def count():
-            return 42  # Заглушка
+from account.models import Profile
 
 def site_info(request):
     # 1. Получаем статические данные (адрес, часы работы)
@@ -16,8 +10,12 @@ def site_info(request):
     address = settings.address if settings else 'г. Алматы, ул. Байзакова, 280, Smart Point'
     
     # 2. Получаем динамические данные (кол-во участников)
-    # Можно добавить кэширование, если запросы станут тяжелыми
-    count = Resident.objects.count()
+    # Считаем профили, у которых текущий план дает статус резидента
+    # Кэшируем результат на 24 часа, так как это тяжелый запрос для каждого хита
+    count = cache.get('residents_count')
+    if count is None:
+        count = Profile.objects.filter(current_plan__grants_resident_status=True).count()
+        cache.set('residents_count', count, 60 * 60 * 24)
 
     # Возвращаем словарь. Эти переменные будут доступны во ВСЕХ HTML шаблонах.
     return {
