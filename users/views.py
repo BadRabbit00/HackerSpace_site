@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.conf import settings
 from .models import User
 from .utils import verify_telegram_data
 
@@ -20,7 +21,9 @@ def login_view(request):
         
         if user is not None:
             login(request, user)
-            next_url = request.POST.get('next', 'home')
+            next_url = request.POST.get('next')
+            if not next_url:
+                next_url = 'home'
             return redirect(next_url)
         else:
             return render(request, 'users/login.html', {'error': 'Invalid credentials'})
@@ -91,6 +94,9 @@ def link_telegram_callback(request):
 
 @login_required
 def connect_telegram_view(request):
+    if not getattr(settings, 'TELEGRAM_AUTH_REQUIRED', True):
+        return redirect('home')
+        
     if request.user.telegram_id:
         return redirect('home')
     return render(request, 'users/connect_telegram.html')

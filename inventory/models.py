@@ -46,8 +46,5 @@ class Loan(models.Model):
     # Сгенерированный документ (PDF)
     contract_file = models.FileField(upload_to='contracts/', null=True, blank=True)
 
-    def save(self, *args, **kwargs):
-        
-        if not self.pk and self.item.owner is None: 
-             self.status = 'active'
-        super().save(*args, **kwargs)
+    def __str__(self):
+        return f"{self.item.name} -> {self.borrower.username}"
