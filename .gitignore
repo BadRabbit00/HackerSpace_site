@@ -11,6 +11,7 @@ db.sqlite3
 db.sqlite3-journal
 media/
 
+
 # Virtual Environment
 venv/
 env/
@@ -26,3 +27,9 @@ env/
 # OS generated files
 .DS_Store
 Thumbs.db
+
+# Migrations
+**/migrations/*
+!**/migrations/__init__.py
+
+TODO_OPTIMIZATION.md

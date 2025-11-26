@@ -1,0 +1,12 @@
+<footer>
+    <div class="footer-info">
+        <p><strong>Адрес:</strong> {{ address|default:"г. Алматы, ул. Байзакова, 280, Smart Point" }}</p>
+        {% if site_settings.phone %}
+        <p><strong>Телефон:</strong> {{ site_settings.phone }}</p>
+        {% endif %}
+        {% if site_settings.email %}
+        <p><strong>Email:</strong> {{ site_settings.email }}</p>
+        {% endif %}
+        <p>&copy; 2025 BlackIce HackerSpace. Все права защищены.</p>
+    </div>
+</footer>

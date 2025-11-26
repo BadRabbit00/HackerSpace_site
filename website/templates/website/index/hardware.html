@@ -1,0 +1,30 @@
+<!-- Hardware Section (Carousel) -->
+<section class="section">
+    <div class="container">
+        <h2 class="section-title">Наше Оборудование</h2>
+        <div class="carousel-container">
+            <button class="carousel-btn prev" id="prevBtn">&#10094;</button>
+            <div class="carousel-track" id="track">
+                {% for item in equipment_list %}
+                <div class="card">
+                    <h3>{{ item.name }}</h3>
+                    <p>{{ item.description|truncatewords:15 }}</p>
+                    <div style="margin-top: 15px; font-size: 0.8rem; color: var(--accent-color);">
+                        {% if item.rent_price_per_day > 0 %}
+                            Аренда: {{ item.rent_price_per_day }} KZT/день
+                        {% else %}
+                            Бесплатно для резидентов
+                        {% endif %}
+                    </div>
+                </div>
+                {% empty %}
+                <div class="card">
+                    <h3>Оборудование загружается...</h3>
+                    <p>Скоро здесь появится список доступного железа.</p>
+                </div>
+                {% endfor %}
+            </div>
+            <button class="carousel-btn next" id="nextBtn">&#10095;</button>
+        </div>
+    </div>
+</section>

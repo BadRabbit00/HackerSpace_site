@@ -1,0 +1,15 @@
+{% load static %}
+<header>
+    <div class="brand">
+        <a href="/" style="display: flex; align-items: center; gap: 10px;">
+            <img src="{% static 'website/img/logo.svg' %}" alt="BlackIce Logo" class="brand-logo">
+            BlackIce<span class="cursor">_</span>
+        </a>
+    </div>
+    <nav>
+        <ul>
+            <li><a href="#">Форум</a></li>
+            {% include 'website/index/user_dropdown.html' %}
+        </ul>
+    </nav>
+</header>

@@ -1,0 +1,185 @@
+{% extends 'website/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard | BlackIce{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'account/css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    
+    <!-- 1. Profile Header -->
+    <div class="profile-header">
+        <div class="profile-avatar">
+            {% if profile.avatar %}
+                <img src="{{ profile.avatar.url }}" alt="Avatar">
+            {% else %}
+                {{ user.username|make_list|first|upper }}
+            {% endif %}
+        </div>
+        <div class="profile-info">
+            <h2>{{ user.username }}</h2>
+            <div class="profile-meta">
+                {% if profile.current_plan %}
+                    <span>Plan: <strong class="text-white">{{ profile.current_plan.title }}</strong></span>
+                    {% if profile.is_resident_active %}
+                        <span class="status-badge status-active">Active</span>
+                    {% elif profile.is_in_grace_period %}
+                        <span class="status-badge status-pending">Grace Period</span>
+                    {% else %}
+                        <span class="status-badge status-inactive">Expired</span>
+                    {% endif %}
+                    <span>Ends: {{ profile.subscription_end_date }}</span>
+                {% else %}
+                    <span class="status-badge status-inactive">No Subscription</span>
+                    <a href="{% url 'pricing' %}" class="link-accent">Get Access</a>
+                {% endif %}
+
+                {% if user.personal_data %}
+                    <span>Docs: 
+                        {% if user.personal_data.verification_status == 'approved' %}
+                            <span class="status-badge status-active">Verified</span>
+                        {% elif user.personal_data.verification_status == 'pending' %}
+                            <span class="status-badge status-pending">Pending</span>
+                        {% elif user.personal_data.verification_status == 'not_submitted' %}
+                            <a href="{% url 'upload_documents' %}" class="link-accent">Upload Docs</a>
+                        {% else %}
+                            <span class="status-badge status-inactive">{{ user.personal_data.get_verification_status_display }}</span>
+                            <a href="{% url 'upload_documents' %}" class="link-accent" style="margin-left: 10px;">Re-upload</a>
+                        {% endif %}
+                    </span>
+                {% else %}
+                    <span>Docs: <a href="{% url 'upload_documents' %}" class="link-accent">Upload Docs</a></span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="ml-auto">
+            <a href="#" class="btn-sm">Edit Profile</a>
+        </div>
+    </div>
+
+    <!-- 2. Events Section -->
+    
+    <!-- Organized Events -->
+    {% if organized_events %}
+    <div class="dashboard-section">
+        <div class="section-header">
+            <h3 class="section-title">Organized by You</h3>
+        </div>
+        <div class="events-grid">
+            {% for event in organized_events %}
+                <div class="dash-card">
+                    <div class="card-title">{{ event.title }}</div>
+                    <div class="card-subtitle">{{ event.date|date:"d M Y, H:i" }}</div>
+                    <div class="card-actions">
+                        <a href="#" class="btn-sm">Manage</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Subscribed Events -->
+    {% if subscribed_events %}
+    <div class="dashboard-section">
+        <div class="section-header">
+            <h3 class="section-title">Your Schedule</h3>
+        </div>
+        <div class="events-grid">
+            {% for event in subscribed_events %}
+                <div class="dash-card">
+                    <div class="card-title">{{ event.title }}</div>
+                    <div class="card-subtitle">{{ event.date|date:"d M Y, H:i" }}</div>
+                    <div class="card-actions">
+                        <span class="text-muted">You are going</span>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Upcoming Events (Carousel-like grid) -->
+    <div class="dashboard-section">
+        <div class="section-header">
+            <h3 class="section-title">Upcoming Events</h3>
+        </div>
+        {% if upcoming_events %}
+            <div class="events-grid">
+                {% for event in upcoming_events %}
+                    <div class="dash-card">
+                        {% if event.photo %}
+                            <img src="{{ event.photo.url }}" class="card-img" alt="{{ event.title }}">
+                        {% else %}
+                            <div class="card-img no-image">No Image</div>
+                        {% endif %}
+                        <div class="card-title">{{ event.title }}</div>
+                        <div class="card-subtitle">{{ event.date|date:"d M Y, H:i" }}</div>
+                        <div class="card-actions">
+                            <a href="#" class="btn-sm">Subscribe</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">No upcoming events found.</div>
+        {% endif %}
+    </div>
+
+    <!-- 3. Inventory Section -->
+    <div class="dashboard-section">
+        <div class="section-header">
+            <h3 class="section-title">Inventory</h3>
+            <a href="#" class="btn-sm">Browse Hardware</a>
+        </div>
+
+        <!-- Borrowed Items -->
+        <h4 class="section-subtitle">Borrowed Items</h4>
+        {% if active_loans or pending_loans %}
+            <div class="inventory-grid">
+                {% for loan in active_loans %}
+                    <div class="dash-card border-accent">
+                        <div class="card-title">{{ loan.item.name }}</div>
+                        <div class="card-subtitle">Return by: {{ loan.deadline|date:"d M Y" }}</div>
+                        <div class="status-badge status-active mb-2">Active</div>
+                        <div class="card-actions">
+                            <a href="#" class="btn-sm">Details</a>
+                        </div>
+                    </div>
+                {% endfor %}
+                
+                {% for loan in pending_loans %}
+                    <div class="dash-card border-pending">
+                        <div class="card-title">{{ loan.item.name }}</div>
+                        <div class="card-subtitle">Requested</div>
+                        <div class="status-badge status-pending mb-2">Pending Approval</div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state mb-4">You haven't borrowed anything yet.</div>
+        {% endif %}
+
+        <!-- My Owned Items (Stored in Space) -->
+        {% if my_items %}
+            <h4 class="section-subtitle mt-4">My Items in Space</h4>
+            <div class="inventory-grid">
+                {% for item in my_items %}
+                    <div class="dash-card">
+                        <div class="card-title">{{ item.name }}</div>
+                        <div class="card-subtitle">#{{ item.inventory_number }}</div>
+                        <div class="card-actions">
+                            <a href="#" class="btn-sm">Manage</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}
+

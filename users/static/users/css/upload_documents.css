@@ -1,0 +1,70 @@
+.upload-container {
+    padding: 100px 50px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.upload-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.upload-header h1 {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--accent-color);
+    margin-bottom: 10px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    color: #fff;
+    margin-bottom: 5px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    background: #111;
+    border: 1px solid #333;
+    color: #fff;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.form-control:focus {
+    border-color: var(--accent-color);
+    outline: none;
+}
+
+.form-control-file {
+    color: #fff;
+}
+
+.btn-submit {
+    background: var(--accent-color);
+    color: #000;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.btn-submit:hover {
+    background: #fff;
+}
+
+/* Utility classes for inline styles replacement */
+.text-accent { color: var(--accent-color); }
+.text-muted { color: #aaa; }
+.d-block { display: block; }
+.mt-1 { margin-top: 5px; }
+.mt-4 { margin-top: 20px; }
+.pt-4 { padding-top: 20px; }
+.border-dashed-top { border-top: 1px dashed #333; }

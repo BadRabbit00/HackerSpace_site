@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}BlackIce HackerSpace | Almaty{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'website/css/style.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    
+    <!-- Welcome Banner -->
+    <div id="welcome-banner" style="display: none; background: var(--accent-color); color: #000; padding: 10px; text-align: center; position: relative; z-index: 2000; font-family: 'Orbitron', sans-serif; font-size: 0.9rem;">
+        <span>SYSTEM MESSAGE: Добро пожаловать в BlackIce HackerSpace. Мы используем нейро-куки.</span>
+        <button id="close-banner" style="background: none; border: 1px solid #000; padding: 2px 8px; font-weight: bold; cursor: pointer; margin-left: 20px; font-family: inherit;">[ACKNOWLEDGE]</button>
+    </div>
+
+    <!-- Navigation -->
+    {% include 'website/index/navbar.html' %}
+
+    {% block content %}
+    {% endblock %}
+
+    <!-- Footer -->
+    {% include 'website/index/footer.html' %}
+
+    <script src="{% static 'website/js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

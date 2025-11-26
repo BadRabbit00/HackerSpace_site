@@ -23,11 +23,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("SECRET_KEY", 'django-insecure-g)0ca_xsmillbhkb88st-^m7v4lo1duj=4!%92s8xl2^1%g+wz')
 
+# Telegram Bot Token
+TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
+TELEGRAM_BOT_NAME = os.environ.get("TELEGRAM_BOT_NAME", "BlackIceHackerSpaceBot")
+
+# Auth Settings
+TELEGRAM_AUTH_REQUIRED = os.environ.get("TELEGRAM_AUTH_REQUIRED", "True") == "True"
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(os.environ.get("DEBUG", 1))
 
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost 127.0.0.1 [::1]").split(" ")
 
+AUTH_USER_MODEL = 'users.User'
 
 # Application definition
 
@@ -39,6 +47,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'website',
+    'users',
+    'account',
+    'inventory',
+    'events',
+    'news'
 ]
 
 MIDDLEWARE = [
@@ -49,6 +62,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'users.middleware.TelegramRequiredMiddleware',
 ]
 
 ROOT_URLCONF = 'HackerSpace.urls'
@@ -63,6 +77,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'website.context_processors.site_info',
+                'users.context_processors.auth_settings',
             ],
         },
     },
@@ -87,7 +103,7 @@ if DB_TYPE == "postgres":
             "PORT": os.environ.get("SQL_PORT", "5432"),
         }
     }
-else:
+elif DB_TYPE == "sqlite":
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -97,18 +113,22 @@ else:
 
 # Cache
 # Redis or LocalMemory
+# По умолчанию пробуем использовать Redis на localhost, если не задано иное
 USE_REDIS = os.environ.get("USE_REDIS", "False") == "True"
 
 if USE_REDIS:
     CACHES = {
         "default": {
             "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": "redis://redis:6379/1",
+            "LOCATION": os.environ.get("REDIS_URL", "redis://127.0.0.1:6379/1"),
             "OPTIONS": {
                 "CLIENT_CLASS": "django_redis.client.DefaultClient",
             }
         }
     }
+    # Храним сессии в Redis для скорости
+    SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+    SESSION_CACHE_ALIAS = "default"
 else:
     CACHES = {
         'default': {

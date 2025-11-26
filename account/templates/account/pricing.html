@@ -1,0 +1,57 @@
+{% extends 'website/base.html' %}
+{% load static %}
+
+{% block title %}Pricing | BlackIce{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'account/css/pricing.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="pricing-container">
+    <div class="pricing-header">
+        <h1>Choose Your Access</h1>
+        <p style="color: #aaa;">Join the community and get access to the space.</p>
+    </div>
+
+    <div class="pricing-grid">
+        {% for plan in plans %}
+        <div class="card" {% if plan == current_plan or not current_plan and plan.price == 0 %}style="border-color: var(--accent-color); box-shadow: 0 0 15px rgba(0, 255, 0, 0.1);"{% endif %}>
+            <h3>{{ plan.title }}</h3>
+            
+            <div class="price-option">
+                <span class="price">{% if plan.price == 0 %}Free{% else %}{{ plan.price }} ₸{% endif %}</span>
+                <span class="label">{{ plan.description }}</span>
+                
+                {% if plan == current_plan or not current_plan and plan.price == 0 %}
+                    <div class="btn btn-disabled" style="background: #222; color: #fff; border: 1px solid #444; cursor: default;">Your Current Plan</div>
+                {% else %}
+                    {% if plan.price > 0 %}
+                        <a href="{% url 'initiate_payment' plan.id %}?student=false" class="btn">
+                            Buy Now
+                        </a>
+                    {% endif %}
+                {% endif %}
+            </div>
+
+            {% if plan.student_price and plan.price > 0 and plan != current_plan %}
+                <div class="price-option student-option">
+                    <span class="price" style="color: var(--accent-color);">{{ plan.student_price }} ₸</span>
+                    <span class="label">Student Discount</span>
+                    
+                    {% if user.personal_data.verification_status == 'approved' and user.personal_data.student_document %}
+                        <a href="{% url 'initiate_payment' plan.id %}?student=true" class="btn btn-outline-accent">
+                            Buy with Discount
+                        </a>
+                    {% else %}
+                        <a href="{% url 'upload_documents' %}" class="btn btn-disabled" onclick="alert('Please upload your student ID and wait for verification first!')">
+                            Verify Status
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

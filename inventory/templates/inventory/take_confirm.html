@@ -1,0 +1,36 @@
+{% extends 'website/base.html' %}
+
+{% block title %}Подтверждение взятия | BlackIce{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 100px; max-width: 600px;">
+    <div class="card">
+        <h2 style="color: var(--accent-color); margin-bottom: 20px;">Подтверждение взятия</h2>
+        
+        <div style="margin-bottom: 30px;">
+            <h3 style="margin-bottom: 10px;">{{ item.name }}</h3>
+            <p style="color: #aaa;">Инвентарный номер: #{{ item.inventory_number }}</p>
+            {% if item.owner %}
+                <p style="color: #aaa;">Владелец: {{ item.owner.username }}</p>
+            {% else %}
+                <p style="color: #aaa;">Владелец: BlackIce HackerSpace</p>
+            {% endif %}
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label for="purpose" style="display: block; margin-bottom: 10px; color: #fff;">Цель использования:</label>
+                <textarea name="purpose" id="purpose" rows="4" required 
+                    style="width: 100%; background: #050505; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 4px;"
+                    placeholder="Для чего вам нужен этот предмет?"></textarea>
+            </div>
+
+            <div style="display: flex; gap: 20px;">
+                <button type="submit" class="hero-btn" style="flex: 1;">Подтверждаю</button>
+                <a href="{% url 'hardware_list' %}" class="hero-btn" style="flex: 1; text-align: center; border-color: #ff4444; color: #ff4444;">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

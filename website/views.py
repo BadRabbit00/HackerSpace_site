@@ -1,47 +1,36 @@
 from django.shortcuts import render
+from django.utils import timezone
+from django.core.cache import cache
+from datetime import timedelta
+from news.models import News
+from inventory.models import Item
+from events.models import Event
 
 def index(request):
-    # Здесь ты будешь получать данные из своей модели
-    # Например: 
-    # info = HackerSpaceInfo.objects.first()
-    # context = {
-    #     'address': info.address,
-    #     'residents_count': info.residents_count,
-    #     ...
-    # }
+    # Данные об адресе и количестве резидентов теперь берутся из context_processors.py
     
-    # Пока используем заглушки для демонстрации
+    # 1. Новости (Кэш 15 минут)
+    news_list = cache.get('homepage_news')
+    if news_list is None:
+        seven_days_ago = timezone.now() - timedelta(days=7)
+        news_list = list(News.objects.filter(published_at__gte=seven_days_ago).order_by('-published_at'))
+        cache.set('homepage_news', news_list, 60 * 15)
+
+    # 2. Оборудование (Кэш 30 минут)
+    equipment_list = cache.get('homepage_equipment')
+    if equipment_list is None:
+        equipment_list = list(Item.objects.filter(is_available_for_loan=True)[:6])
+        cache.set('homepage_equipment', equipment_list, 60 * 30)
+
+    # 3. Ивенты (Кэш 15 минут)
+    events_list = cache.get('homepage_events')
+    if events_list is None:
+        events_list = list(Event.objects.filter(date__gte=timezone.now()).order_by('date')[:6])
+        cache.set('homepage_events', events_list, 60 * 15)
+
     context = {
-        'address': 'г. Алматы, ул. Байзакова, 280, Smart Point',
-        'residents_count': 42,
-        'news_list': [
-            {
-                'title': 'Открытие сезона мастер-классов',
-                'date': '24.11.2025',
-                'desc': 'Запускаем серию воркшопов по Arduino и IoT для начинающих.'
-            },
-            {
-                'title': 'Новое оборудование: HackRF One',
-                'date': '20.11.2025',
-                'desc': 'В нашем арсенале пополнение. Теперь доступен SDR трансивер для экспериментов.'
-            },
-            {
-                'title': 'Хакатон: CyberSecurity 2025',
-                'date': '15.11.2025',
-                'desc': 'Приглашаем всех желающих принять участие в ночном кодинге.'
-            }
-        ],
-        'hardware_list': [
-            'Arduino Uno R3/Mini/Nano',
-            'Raspberry Pi 2/3/Zero',
-            'Orange Pi Prime/R1/2G-IOT/Zero H2+',
-            'HackRF One',
-            'Motorola Calypso',
-            'RTL-SDR R820T2 RTL2832U',
-            'ACS ACR122u NFC',
-            'Proxmark3 Easy',
-            'Wi-Fi & Bluetooth Dongles',
-            'Many More+'
-        ]
+        'news_list': news_list,
+        'equipment_list': equipment_list,
+        'events_list': events_list,
     }
-    return render(request, 'index.html', context)
+    return render(request, 'website/index.html', context)

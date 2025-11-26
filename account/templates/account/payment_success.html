@@ -1,0 +1,83 @@
+{% extends 'website/base.html' %}
+{% load static %}
+
+{% block title %}Payment Successful | BlackIce{% endblock %}
+
+{% block extra_css %}
+<style>
+    .success-container {
+        padding: 100px 20px;
+        max-width: 600px;
+        margin: 0 auto;
+        text-align: center;
+    }
+    
+    .success-icon {
+        font-size: 5rem;
+        color: var(--accent-color);
+        margin-bottom: 30px;
+    }
+    
+    .success-title {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 2.5rem;
+        color: #fff;
+        margin-bottom: 20px;
+    }
+    
+    .success-message {
+        color: #aaa;
+        font-size: 1.1rem;
+        margin-bottom: 40px;
+        line-height: 1.6;
+    }
+    
+    .plan-details {
+        background: #111;
+        border: 1px solid #333;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 40px;
+    }
+    
+    .plan-name {
+        color: #fff;
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+    }
+    
+    .btn {
+        display: inline-block;
+        padding: 12px 30px;
+        background: var(--accent-color);
+        color: #000;
+        text-decoration: none;
+        border-radius: 4px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+    
+    .btn:hover {
+        background: #fff;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="success-container">
+    <div class="success-icon">✓</div>
+    <h1 class="success-title">Payment Successful!</h1>
+    
+    <div class="success-message">
+        Thank you for your purchase. Your subscription has been activated successfully.
+        You now have access to the HackerSpace.
+    </div>
+    
+    <div class="plan-details">
+        <div class="plan-name">{{ plan.title }}</div>
+        <div style="color: #888;">Valid for {{ plan.duration_days }} days</div>
+    </div>
+    
+    <a href="{% url 'account_dashboard' %}" class="btn">Go to Dashboard</a>
+</div>
+{% endblock %}
