@@ -141,3 +141,35 @@ def take_item(request, item_id):
         'item': item,
         'default_return_date': default_return_date
     })
+
+@login_required
+def manage_my_item(request, item_id):
+    item = get_object_or_404(Item, id=item_id)
+    
+    # Security check: only owner can manage
+    if item.owner != request.user:
+        messages.error(request, "Вы не являетесь владельцем этого предмета.")
+        return redirect('account_dashboard')
+
+    if request.method == 'POST':
+        if 'delete_item' in request.POST:
+            # Check if there are active loans
+            active_loans = Loan.objects.filter(item=item, status__in=['active', 'overdue', 'requested']).exists()
+            if active_loans:
+                messages.error(request, "Нельзя забрать предмет, пока он находится у кого-то на руках или запрошен.")
+                return redirect('account_dashboard')
+            
+            item.delete()
+            messages.success(request, f"Предмет '{item.name}' успешно удален из системы (вы забрали его).")
+            return redirect('account_dashboard')
+        
+        # Update fields
+        item.name = request.POST.get('name')
+        item.description = request.POST.get('description')
+        item.is_available_for_loan = request.POST.get('is_available') == 'on'
+        item.save()
+        
+        messages.success(request, f"Настройки предмета '{item.name}' обновлены.")
+        return redirect('account_dashboard')
+
+    return redirect('account_dashboard')

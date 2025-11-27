@@ -25,7 +25,12 @@ def index(request):
     # 3. Ивенты (Кэш 15 минут)
     events_list = cache.get('homepage_events')
     if events_list is None:
-        events_list = list(Event.objects.filter(date__gte=timezone.now()).order_by('date')[:6])
+        # Показываем ивенты только на ближайшую неделю (7 дней)
+        week_ahead = timezone.now() + timedelta(days=7)
+        events_list = list(Event.objects.filter(
+            date__gte=timezone.now(),
+            date__lte=week_ahead
+        ).order_by('date')[:6])
         cache.set('homepage_events', events_list, 60 * 15)
 
     context = {

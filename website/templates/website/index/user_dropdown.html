@@ -9,8 +9,8 @@
             <strong>{{ user.username }}</strong>
         </div>
         <a href="{% url 'account_dashboard' %}" class="dropdown-item">Профиль</a>
-        <a href="#" class="dropdown-item">Анонсы</a>
-        <a href="#" class="dropdown-item">Инвентарь</a>
+        <a href="{% url 'event_list' %}" class="dropdown-item">Анонсы</a>
+        <a href="{% url 'hardware_list' %}" class="dropdown-item">Инвентарь</a>
         <a href="#" class="dropdown-item">Настройки</a>
         <div class="dropdown-divider"></div>
         <a href="{% url 'logout' %}" class="dropdown-item text-danger">Выйти</a>

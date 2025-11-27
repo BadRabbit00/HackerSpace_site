@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from .models import News
 from .forms import NewsForm
@@ -9,7 +9,7 @@ def news_home(request):
     return render(request, 'news/news_home.html', {'news_items': news_items})
 
 @login_required
-@user_passes_test(lambda u: u.is_staff)
+@permission_required('news.add_news', raise_exception=True)
 def create_news(request):
     if request.method == 'POST':
         form = NewsForm(request.POST, request.FILES)

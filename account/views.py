@@ -37,12 +37,12 @@ def dashboard(request):
 
     # 2. Events Data
     today = timezone.now()
-    next_month = today + timedelta(days=30)
+    next_week = today + timedelta(days=7)
     
     # Upcoming events (excluding ones user is already subscribed to)
     upcoming_events = Event.objects.filter(
         date__gte=today, 
-        date__lte=next_month
+        date__lte=next_week
     ).exclude(participants=user).order_by('date')
     
     # Events user is subscribed to

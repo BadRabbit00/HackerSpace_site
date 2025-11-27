@@ -120,6 +120,80 @@
         </div>
     </div>
 
+    <!-- Edit Event Modal -->
+    <div id="editEventModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeEditEventModal">&times;</span>
+            <h2 class="modal-title">Edit Event</h2>
+            <form method="post" id="editEventForm" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" name="title" id="editEventTitle" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Date & Time</label>
+                    <input type="datetime-local" name="date" id="editEventDate" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" name="location" id="editEventLocation" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Price</label>
+                    <input type="number" name="price" id="editEventPrice" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" id="editEventDescription" class="form-control" rows="4"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Photo (Leave empty to keep current)</label>
+                    <input type="file" name="photo" class="form-control-file">
+                </div>
+
+                <button type="submit" class="btn-submit">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Manage Item Modal -->
+    <div id="manageItemModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeManageItemModal">&times;</span>
+            <h2 class="modal-title">Manage Item</h2>
+            <form method="post" id="manageItemForm">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" name="name" id="manageItemName" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" id="manageItemDescription" class="form-control" rows="4"></textarea>
+                </div>
+                
+                <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" name="is_available" id="manageItemAvailable" style="width: auto;">
+                    <label for="manageItemAvailable" style="margin: 0;">Available for others to borrow</label>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+                    <button type="submit" class="btn-submit">Save Changes</button>
+                    <button type="submit" name="delete_item" value="1" class="btn-sm" style="background: #ff4444; border-color: #ff4444; color: white;" onclick="return confirm('Are you sure you want to take this item back? It will be removed from the system.');">Take Back (Remove)</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- 2. Events Section -->
     
     <!-- Organized Events -->
@@ -134,7 +208,15 @@
                     <div class="card-title">{{ event.title }}</div>
                     <div class="card-subtitle">{{ event.date|date:"d M Y, H:i" }}</div>
                     <div class="card-actions">
-                        <a href="#" class="btn-sm">Manage</a>
+                        <button class="btn-sm edit-event-btn"
+                            data-id="{{ event.id }}"
+                            data-title="{{ event.title }}"
+                            data-date="{{ event.date|date:'Y-m-d\TH:i' }}"
+                            data-location="{{ event.location }}"
+                            data-price="{{ event.price|default:'' }}"
+                            data-description="{{ event.description }}">
+                            Manage
+                        </button>
                     </div>
                 </div>
             {% endfor %}
@@ -166,7 +248,7 @@
     <div class="dashboard-section">
         <div class="section-header">
             <h3 class="section-title">Upcoming Events</h3>
-            {% if user.is_staff %}
+            {% if perms.events.add_event %}
                 <a href="{% url 'create_event' %}" class="btn-sm" style="border-color: var(--accent-color); color: var(--accent-color);">+ Create Event</a>
             {% endif %}
         </div>
@@ -244,7 +326,13 @@
                         <div class="card-title">{{ item.name }}</div>
                         <div class="card-subtitle">#{{ item.inventory_number }}</div>
                         <div class="card-actions">
-                            <a href="#" class="btn-sm">Manage</a>
+                            <button class="btn-sm manage-item-btn"
+                                data-id="{{ item.id }}"
+                                data-name="{{ item.name }}"
+                                data-description="{{ item.description }}"
+                                data-available="{{ item.is_available_for_loan|yesno:'true,false' }}">
+                                Manage
+                            </button>
                         </div>
                     </div>
                 {% endfor %}
@@ -302,6 +390,65 @@
             }
         }
 
+        // Edit Event Modal Logic
+        const editEventModal = document.getElementById("editEventModal");
+        const editEventClose = document.getElementById("closeEditEventModal");
+        const editEventBtns = document.querySelectorAll(".edit-event-btn");
+        const editEventForm = document.getElementById("editEventForm");
+
+        editEventBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Populate form fields
+                document.getElementById('editEventTitle').value = this.dataset.title;
+                document.getElementById('editEventDate').value = this.dataset.date;
+                document.getElementById('editEventLocation').value = this.dataset.location;
+                document.getElementById('editEventPrice').value = this.dataset.price;
+                document.getElementById('editEventDescription').value = this.dataset.description;
+                
+                // Set form action URL
+                // We use a placeholder '0' in the URL pattern and replace it
+                const eventId = this.dataset.id;
+                editEventForm.action = "{% url 'edit_event' 0 %}".replace('0', eventId);
+                
+                // Show modal
+                editEventModal.style.display = "block";
+            });
+        });
+
+        if (editEventClose) {
+            editEventClose.onclick = function() {
+                editEventModal.style.display = "none";
+            }
+        }
+
+        // Manage Item Modal Logic
+        const manageItemModal = document.getElementById("manageItemModal");
+        const manageItemClose = document.getElementById("closeManageItemModal");
+        const manageItemBtns = document.querySelectorAll(".manage-item-btn");
+        const manageItemForm = document.getElementById("manageItemForm");
+
+        manageItemBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Populate form fields
+                document.getElementById('manageItemName').value = this.dataset.name;
+                document.getElementById('manageItemDescription').value = this.dataset.description;
+                document.getElementById('manageItemAvailable').checked = this.dataset.available === 'true';
+                
+                // Set form action URL
+                const itemId = this.dataset.id;
+                manageItemForm.action = "{% url 'manage_my_item' 0 %}".replace('0', itemId);
+                
+                // Show modal
+                manageItemModal.style.display = "block";
+            });
+        });
+
+        if (manageItemClose) {
+            manageItemClose.onclick = function() {
+                manageItemModal.style.display = "none";
+            }
+        }
+
         // Global Window Click (Close any modal)
         window.onclick = function(event) {
             if (event.target == profileModal) {
@@ -309,6 +456,12 @@
             }
             if (event.target == loanModal) {
                 loanModal.style.display = "none";
+            }
+            if (event.target == editEventModal) {
+                editEventModal.style.display = "none";
+            }
+            if (event.target == manageItemModal) {
+                manageItemModal.style.display = "none";
             }
         }
     });
