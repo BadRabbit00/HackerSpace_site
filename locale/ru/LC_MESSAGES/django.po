@@ -29,12 +29,12 @@ msgstr "Английский"
 
 #: website/templates/website/index/hero.html:5
 msgid ""
-"Первый хакерспейс в Средней Азии. Создавай. Изучай. Взламывай (в рамках "
-"закона)."
+"The first hackerspace in Central Asia. Create. Learn. Hack (within the law)."
+
 msgstr "Первый хакерспейс в Средней Азии. Создавай. Изучай. Взламывай (в рамках закона)."
 
 #: website/templates/website/index/hero.html:6
-msgid "Стать резидентом"
+msgid "Become a resident"
 msgstr "Стать резидентом"
 
 #: website/templates/website/index/navbar.html:28
