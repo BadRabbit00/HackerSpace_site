@@ -1,147 +1,159 @@
 # 🐇 BlackIce HackerSpace Portal
 
-![Status](https://img.shields.io/badge/Status-In%20Development-green)
+![Status](https://img.shields.io/badge/Status-Active%20Development-green)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
-![Django](https://img.shields.io/badge/Django-5.2-092E20)
-![Redis](https://img.shields.io/badge/Redis-Cache-red)
+![Django](https://img.shields.io/badge/Django-5.x-092E20)
+![RabbitMQ](https://img.shields.io/badge/RabbitMQ-Async%20Tasks-orange)
+![Docker](https://img.shields.io/badge/Docker-Compose-blue)
 
-Официальный портал первого хакерспейса в Средней Азии **"BlackIce"**. 
-Система управления сообществом, контентом и ресурсами пространства с уникальным Cyberpunk-дизайном.
+Официальный портал хакерспейса **"BlackIce"**. 
+Комплексная система управления сообществом, инвентарем, событиями и документами с уникальным Cyberpunk-дизайном.
+
+Проект построен на микросервисной архитектуре: Django отвечает за веб-интерфейс и бизнес-логику, а тяжелые задачи (генерация документов) вынесены в фоновые воркеры через RabbitMQ.
 
 ---
 
 ## ⚡ Основные возможности
 
-### 👤 Пользователи и Резиденство
-*   **Профили**: Расширенные профили пользователей с привязкой GitHub/Telegram.
-*   **Подписки**: Система тарифных планов (`SubscriptionPlan`). Статус "Резидент" выдается автоматически при активной подписке.
-*   **Контроль доступа**: Логика проверки доступа в помещение (`grants_resident_status`, Grace Period).
+### 👤 Пользователи и Роли (RBAC)
+*   **Профили**: Расширенные профили с аватарами, био и соцсетями.
+*   **Подписки**: Система тарифных планов. Автоматическое присвоение статуса "Резидент".
+*   **Группы доступа**: Разделение прав через Django Groups:
+    *   `Event Managers`: Создание и модерация ивентов.
+    *   `News Editors`: Публикация новостей.
+    *   `Inventory Managers`: Управление оборудованием спейса.
 
-### 📰 Контент и События
-*   **Новости**: Система публикации новостей. Автоматическая генерация превью-карточек (`NewsCard`) через Django Signals.
-*   **События**: Календарь мероприятий с регистрацией.
-*   **Интеграция**: Вывод последних новостей и событий на главную страницу с кэшированием.
+### 🛠 Инвентарь и Шеринг (Inventory)
+*   **Гибридное владение**: Предметы могут принадлежать Спейсу или конкретному Резиденту.
+*   **Аренда (Loans)**: 
+    *   Проверка доступности и прав доступа (Grace Period).
+    *   Защита от "само-аренды".
+    *   Статусы: `Requested` (для личных вещей), `Active` (авто-выдача вещей спейса).
+*   **Управление**: Владельцы могут скрывать свои предметы из поиска или забирать их (удалять из системы) через дашборд.
 
-### 🛠 Оборудование (Inventory)
-*   **Каталог**: Список доступного "железа" (Hardware).
-*   **Аренда**: Система выдачи предметов (`Loan`). Проверка доступности, статуса резидента и занятости предмета.
+### 📅 События (Events)
+*   **Менеджмент**: Создание и редактирование ивентов через удобные модальные окна.
+*   **Участие**: Кнопка "Join" с проверкой требований подписки.
+*   **Хостинг**: Возможность назначить организатора (Host) при создании события.
 
-### 🎨 UI/UX (Cyberpunk Theme)
-*   **Дизайн**: Темная тема, неоновые акценты, шрифт Orbitron.
-*   **Эффекты**: JS-эффекты "Glitch" (глюки текста), кастомные карусели с нативным скроллом.
-*   **Интерактивность**: Приветственные баннеры с запоминанием через Cookies.
+### 📄 Документооборот (Async PDF)
+*   **Генерация контрактов**: При взятии предмета в аренду автоматически генерируется PDF-акт приема-передачи.
+*   **Архитектура**: 
+    *   Django отправляет задачу в очередь `RabbitMQ`.
+    *   Отдельный контейнер `worker` (Pika + ReportLab) забирает задачу.
+    *   Генерируется PDF с поддержкой кириллицы (DejaVu Fonts) и прикрепляется к объекту аренды.
 
-### 🚀 Производительность
-*   **Redis Caching**: 
-    *   Кэширование счетчика резидентов (24 часа).
-    *   Кэширование блоков главной страницы (Новости, Ивенты, Оборудование).
-*   **Signals**: Автоматическая инвалидация кэша при обновлении контента.
+### 🎨 UI/UX
+*   **Cyberpunk Style**: Темная тема, неоновые границы, Glassmorphism.
+*   **Dashboard**: Единый центр управления для пользователя (профиль, ивенты, аренды, мои предметы).
+*   **Интерактивность**: Flatpickr для дат, модальные окна для редактирования без перезагрузки страниц.
 
 ---
 
 ## 🛠 Технологический стек
 
-*   **Backend**: Python 3, Django 5.2.8
+*   **Backend**: Django 5.x
 *   **Database**: SQLite (Dev) / PostgreSQL (Prod)
-*   **Cache**: Redis (via `django-redis`)
-*   **Frontend**: Django Templates, Vanilla JS, CSS3 (Grid/Flexbox)
+*   **Message Broker**: RabbitMQ
+*   **Worker**: Python script (`document_creater/consumer.py`) + ReportLab
+*   **Frontend**: Django Templates, CSS3 Variables, Vanilla JS
 *   **Containerization**: Docker, Docker Compose
 
 ---
 
-## 🚀 Установка и запуск (Local)
+## 🐳 Запуск через Docker (Рекомендуется)
 
-1.  **Клонируйте репозиторий:**
-    ```bash
-    git clone https://github.com/BadRabbit00/HackerSpace_site.git
-    cd HackerSpace_site
-    ```
+Проект полностью докеризирован. Включает сервисы: `web` (Django), `db` (Postgres), `rabbitmq`, `worker`, `nginx`.
 
-2.  **Создайте виртуальное окружение:**
-    ```bash
-    python -m venv venv
-    # Windows
-    venv\Scripts\activate
-    # Linux/Mac
-    source venv/bin/activate
-    ```
+### 1. Запуск полного стека
+```bash
+docker compose --profile full up --build
+```
+*Это поднимет Django, Postgres, RabbitMQ, Worker и Nginx.*
 
-3.  **Установите зависимости:**
+### 2. Создание суперпользователя
+```bash
+docker compose exec web python manage.py createsuperuser
+```
+
+### 3. Инициализация ролей
+Для создания стандартных групп (Event Managers, News Editors, etc.) выполните команду:
+```bash
+docker compose exec web python manage.py setup_roles
+```
+
+---
+
+## 🚀 Локальная разработка (без Docker)
+
+Если вы хотите запустить проект локально (вам понадобится запущенный RabbitMQ отдельно или отключение функционала PDF):
+
+1.  **Установка зависимостей:**
     ```bash
     pip install -r requirements.txt
     ```
 
-4.  **Настройте переменные окружения:**
-    Создайте файл `.env` в корне проекта (см. раздел Конфигурация).
-
-5.  **Примените миграции:**
+2.  **Миграции:**
     ```bash
     python manage.py migrate
     ```
 
-6.  **Запустите сервер:**
+3.  **Настройка ролей:**
+    ```bash
+    python manage.py setup_roles
+    ```
+
+4.  **Запуск:**
     ```bash
     python manage.py runserver
     ```
 
----
-
-## 🐳 Запуск через Docker
-
-Проект поддерживает гибкую конфигурацию через профили Docker Compose.
-
-**1. Полный стек (PostgreSQL + Redis + Nginx)**
+*Примечание: Для работы генерации документов локально, вам нужно запустить RabbitMQ и скрипт воркера вручную:*
 ```bash
-docker compose --profile full up --build
-```
-
-**2. Только SQLite + Redis (Рекомендуется для Dev)**
-```bash
-docker compose --profile redis up --build
-```
-
-**3. Минимальный запуск (только Django)**
-```bash
-docker compose up --build
-```
-
----
-
-## ⚙️ Конфигурация (.env)
-
-Пример файла `.env`:
-
-```env
-DEBUG=1
-SECRET_KEY=your_super_secret_key_here
-ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
-
-# База данных (sqlite или postgres)
-DATABASE=sqlite
-# Если postgres:
-SQL_DATABASE=hackerspace_db
-SQL_USER=postgres
-SQL_PASSWORD=postgres
-SQL_HOST=db
-SQL_PORT=5432
-
-# Кэширование
-USE_REDIS=True
-REDIS_URL=redis://127.0.0.1:6379/1
-
-# Telegram Bot (опционально)
-TELEGRAM_BOT_TOKEN=your_bot_token
-TELEGRAM_AUTH_REQUIRED=True
+python document_creater/consumer.py
 ```
 
 ---
 
 ## 📂 Структура проекта
 
-*   `account/` - Управление подписками, профилями и платежами.
-*   `events/` - Система мероприятий.
-*   `inventory/` - Учет и аренда оборудования.
-*   `news/` - Новости и блог.
-*   `users/` - Кастомная модель пользователя и аутентификация.
-*   `website/` - Главная страница, статика, глобальные контекст-процессоры.
-*   `forum/` - Форум для общения.
+*   `HackerSpace/` - Основные настройки проекта.
+*   `account/` - Личный кабинет, дашборд, профили.
+*   `events/` - Приложение событий.
+*   `inventory/` - Логика предметов и аренды.
+*   `document_creater/` - Логика микросервиса генерации PDF (Consumer).
+*   `users/` - Кастомная модель пользователя и команды управления (`setup_roles`).
+*   `news/` - Новостной движок.
+*   `website/` - Лендинг и статика.
+
+---
+
+## 🛡 Права доступа (Permissions)
+
+Система использует стандартные права Django.
+*   **Event Managers**: `events.add_event`, `events.change_event`
+*   **News Editors**: `news.add_news`, `news.change_news`
+*   **Inventory Managers**: `inventory.add_item`, `inventory.change_item`
+
+Назначить пользователя в группу можно через админку: `/admin/`.
+
+---
+
+## ⚙️ Переменные окружения (.env)
+
+```env
+DEBUG=1
+SECRET_KEY=your_secret
+ALLOWED_HOSTS=localhost 127.0.0.1
+
+# Database
+DATABASE=postgres # или sqlite
+SQL_DATABASE=hackerspace_db
+SQL_USER=postgres
+SQL_PASSWORD=postgres
+SQL_HOST=db
+SQL_PORT=5432
+
+# RabbitMQ
+RABBITMQ_HOST=rabbitmq
+```
