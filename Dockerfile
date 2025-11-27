@@ -8,9 +8,10 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-# Install system dependencies (including fonts for PDF generation)
+# Install system dependencies (including fonts for PDF generation and gettext for i18n)
 RUN apt-get update && apt-get install -y \
     fonts-dejavu \
+    gettext \
     && rm -rf /var/lib/apt/lists/*
 
 # Install dependencies

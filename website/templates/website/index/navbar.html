@@ -1,4 +1,28 @@
 {% load static %}
+{% load i18n %}
+
+<style>
+    .lang-select {
+        background-color: #050505;
+        color: #fff;
+        border: 1px solid #333;
+        padding: 5px 10px;
+        font-family: 'Orbitron', sans-serif;
+        cursor: pointer;
+        outline: none;
+        transition: all 0.3s ease;
+    }
+    .lang-select:hover, .lang-select:focus {
+        border-color: var(--accent-color);
+        box-shadow: 0 0 5px rgba(0, 255, 65, 0.2);
+    }
+    .lang-select option {
+        background-color: #050505;
+        color: #fff;
+        padding: 10px;
+    }
+</style>
+
 <header>
     <div class="brand">
         <a href="/" style="display: flex; align-items: center; gap: 10px;">
@@ -8,7 +32,23 @@
     </div>
     <nav>
         <ul>
-            <li><a href="#">Форум</a></li>
+            <li>
+                <form action="{% url 'set_language' %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <input name="next" type="hidden" value="{{ redirect_to }}">
+                    <select name="language" onchange="this.form.submit()" class="lang-select">
+                        {% get_current_language as LANGUAGE_CODE %}
+                        {% get_available_languages as LANGUAGES %}
+                        {% get_language_info_list for LANGUAGES as languages %}
+                        {% for language in languages %}
+                            <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                                {{ language.code|upper }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </form>
+            </li>
+            <li><a href="#">{% trans "Forum" %}</a></li>
             {% include 'website/index/user_dropdown.html' %}
         </ul>
     </nav>

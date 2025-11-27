@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from .models import News
@@ -7,6 +7,10 @@ from .forms import NewsForm
 def news_home(request):
     news_items = News.objects.all().order_by('-published_at')
     return render(request, 'news/news_home.html', {'news_items': news_items})
+
+def news_detail(request, news_id):
+    news = get_object_or_404(News, id=news_id)
+    return render(request, 'news/news_detail.html', {'news': news})
 
 @login_required
 @permission_required('news.add_news', raise_exception=True)

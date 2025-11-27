@@ -1,0 +1,32 @@
+{% extends 'website/base.html' %}
+{% load static %}
+
+{% block title %}400 | Bad Request{% endblock %}
+
+{% block content %}
+<div class="container" style="min-height: 60vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding-top: 100px;">
+    <h1 style="font-family: 'Orbitron', sans-serif; font-size: 6rem; color: #aaa; text-shadow: 0 0 10px #aaa; margin: 0;">
+        400
+    </h1>
+    
+    <h2 style="font-family: 'Orbitron', sans-serif; color: #fff; margin-top: 10px; font-size: 1.5rem;">
+        BAD REQUEST
+    </h2>
+    
+    <p style="color: #aaa; max-width: 500px; margin: 20px auto; font-family: 'Roboto Mono', monospace;">
+        The system could not understand your request. Syntax error or invalid parameters detected.
+    </p>
+
+    <a href="{% url 'home' %}" class="btn" style="margin-top: 30px; display: inline-block; padding: 15px 40px; background: transparent; border: 1px solid #aaa; color: #aaa; font-family: 'Orbitron', sans-serif; text-decoration: none; transition: all 0.3s;">
+        RESET CONNECTION
+    </a>
+</div>
+
+<style>
+    .btn:hover {
+        background: #aaa !important;
+        color: #000 !important;
+        box-shadow: 0 0 20px #aaa;
+    }
+</style>
+{% endblock %}

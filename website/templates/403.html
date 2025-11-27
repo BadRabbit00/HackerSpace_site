@@ -1,0 +1,33 @@
+{% extends 'website/base.html' %}
+{% load static %}
+
+{% block title %}403 | Access Denied{% endblock %}
+
+{% block content %}
+<div class="container" style="min-height: 60vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding-top: 100px;">
+    <div style="font-size: 6rem; margin-bottom: 20px;">🚫</div>
+    <h1 style="font-family: 'Orbitron', sans-serif; font-size: 4rem; color: #ffaa00; text-shadow: 0 0 15px #ffaa00; margin: 0;">
+        ACCESS DENIED
+    </h1>
+    
+    <h2 style="font-family: 'Orbitron', sans-serif; color: #fff; margin-top: 10px; font-size: 1.5rem;">
+        ERROR 403
+    </h2>
+    
+    <p style="color: #aaa; max-width: 500px; margin: 20px auto; font-family: 'Roboto Mono', monospace;">
+        You do not have the required clearance to access this sector. Please present valid credentials or contact the system administrator.
+    </p>
+
+    <a href="{% url 'home' %}" class="btn" style="margin-top: 30px; display: inline-block; padding: 15px 40px; background: transparent; border: 1px solid #ffaa00; color: #ffaa00; font-family: 'Orbitron', sans-serif; text-decoration: none; transition: all 0.3s;">
+        RETURN TO SAFETY
+    </a>
+</div>
+
+<style>
+    .btn:hover {
+        background: #ffaa00 !important;
+        color: #000 !important;
+        box-shadow: 0 0 20px #ffaa00;
+    }
+</style>
+{% endblock %}
