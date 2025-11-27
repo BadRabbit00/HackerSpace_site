@@ -71,7 +71,15 @@ docker compose --profile full up --build
 ```
 *Это поднимет Django, Postgres, RabbitMQ, Worker и Nginx.*
 
-### 2. Создание суперпользователя
+### 2. Суперпользователь (автоматическое создание)
+
+При запуске через Docker, суперпользователь с именем **BadRabbit** создается автоматически (см. `entrypoint.sh`). 
+
+Для задания пароля и email используйте переменные окружения:
+- `DJANGO_SUPERUSER_PASSWORD`
+- `DJANGO_SUPERUSER_EMAIL`
+
+Если автоматическое создание не сработало или требуется другой суперпользователь, выполните вручную:
 ```bash
 docker compose exec web python manage.py createsuperuser
 ```
