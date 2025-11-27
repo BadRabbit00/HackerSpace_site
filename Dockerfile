@@ -8,6 +8,11 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
+# Install system dependencies (including fonts for PDF generation)
+RUN apt-get update && apt-get install -y \
+    fonts-dejavu \
+    && rm -rf /var/lib/apt/lists/*
+
 # Install dependencies
 COPY ./requirements.txt .
 RUN pip install --upgrade pip && pip install -r requirements.txt

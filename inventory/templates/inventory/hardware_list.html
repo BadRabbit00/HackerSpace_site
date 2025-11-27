@@ -1,0 +1,232 @@
+{% extends 'website/base.html' %}
+{% load static %}
+
+{% block title %}Hardware Inventory | BlackIce{% endblock %}
+
+{% block extra_css %}
+<style>
+    .inventory-container {
+        padding: 100px 50px;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .inventory-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+        border-bottom: 1px solid #222;
+        padding-bottom: 20px;
+    }
+
+    .inventory-title {
+        font-family: 'Orbitron', sans-serif;
+        color: var(--accent-color);
+        font-size: 2rem;
+    }
+
+    .search-form {
+        display: flex;
+        gap: 10px;
+    }
+
+    .search-input {
+        background: #111;
+        border: 1px solid #333;
+        color: #fff;
+        padding: 10px 15px;
+        border-radius: 4px;
+        width: 300px;
+    }
+
+    .search-input:focus {
+        border-color: var(--accent-color);
+        outline: none;
+    }
+
+    .btn-search {
+        background: var(--accent-color);
+        color: #000;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .hardware-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 30px;
+    }
+
+    .hardware-card {
+        background: #0a0a0a;
+        border: 1px solid #222;
+        border-radius: 8px;
+        padding: 25px;
+        transition: 0.3s;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .hardware-card:hover {
+        border-color: var(--accent-color);
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 15px;
+    }
+
+    .item-name {
+        font-size: 1.2rem;
+        color: #fff;
+        font-weight: bold;
+    }
+
+    .item-number {
+        font-family: 'Courier New', monospace;
+        color: #666;
+        font-size: 0.8rem;
+        border: 1px solid #333;
+        padding: 2px 6px;
+        border-radius: 4px;
+    }
+
+    .item-desc {
+        color: #aaa;
+        font-size: 0.9rem;
+        margin-bottom: 20px;
+        flex-grow: 1;
+    }
+
+    .item-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: auto;
+        padding-top: 15px;
+        border-top: 1px solid #222;
+    }
+
+    .owner-badge {
+        font-size: 0.8rem;
+        padding: 4px 8px;
+        border-radius: 4px;
+        background: #111;
+        color: #888;
+    }
+
+    .owner-space {
+        color: var(--accent-color);
+        border: 1px solid rgba(77, 255, 0, 0.2);
+    }
+
+    .owner-user {
+        color: #0077be;
+        border: 1px solid rgba(0, 119, 190, 0.2);
+    }
+
+    .btn-take {
+        background: transparent;
+        border: 1px solid var(--accent-color);
+        color: var(--accent-color);
+        padding: 8px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: 0.3s;
+    }
+
+    .btn-take:hover {
+        background: var(--accent-color);
+        color: #000;
+    }
+
+    .btn-disabled {
+        border-color: #444;
+        color: #444;
+        cursor: not-allowed;
+    }
+
+    .btn-disabled:hover {
+        background: transparent;
+        color: #444;
+    }
+
+    .status-unavailable {
+        color: #ff4444;
+        font-size: 0.9rem;
+    }
+
+    .category-title {
+        font-family: 'Orbitron', sans-serif;
+        color: #fff;
+        font-size: 1.5rem;
+        margin-top: 40px;
+        margin-bottom: 20px;
+        border-left: 3px solid var(--accent-color);
+        padding-left: 15px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="inventory-container">
+    <div class="inventory-header">
+        <h1 class="inventory-title">Hardware Inventory</h1>
+        <form class="search-form" method="get">
+            <input type="text" name="q" class="search-input" placeholder="Search hardware..." value="{{ request.GET.q }}">
+            <button type="submit" class="btn-search">Search</button>
+        </form>
+    </div>
+
+    {% regroup items by category as category_list %}
+
+    {% for category in category_list %}
+        <h2 class="category-title">{{ category.grouper|default:"Other" }}</h2>
+        <div class="hardware-grid">
+            {% for item in category.list %}
+                <div class="hardware-card">
+                    <div class="card-header">
+                        <div class="item-name">{{ item.name }}</div>
+                        <div class="item-number">#{{ item.inventory_number }}</div>
+                    </div>
+                    
+                    <div class="item-desc">
+                        {{ item.description|truncatewords:20 }}
+                    </div>
+
+                    <div class="item-meta">
+                        {% if item.owner %}
+                            <span class="owner-badge owner-user">Owner: {{ item.owner.username }}</span>
+                        {% else %}
+                            <span class="owner-badge owner-space">Space Property</span>
+                        {% endif %}
+
+                        {% if item.id in unavailable_item_ids %}
+                            <span class="status-unavailable">Currently Unavailable</span>
+                        {% else %}
+                            <a href="{% url 'take_item' item.id %}" class="btn-take">
+                                {% if item.owner %}Request{% else %}Take{% endif %}
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% empty %}
+        <div style="text-align: center; padding: 50px; color: #666;">
+            No hardware found matching your criteria.
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -13,6 +13,7 @@ class Item(models.Model):
     inventory_number = models.CharField(max_length=50, unique=True) # Штрихкод
     name = models.CharField(max_length=200)
     description = models.TextField()
+    category = models.CharField(max_length=100, default='General')
     
     # Цены и условия (если владелец хочет сдавать)
     rent_price_per_day = models.DecimalField(default=0, max_digits=10, decimal_places=2)

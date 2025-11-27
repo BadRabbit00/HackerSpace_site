@@ -2,6 +2,38 @@
 
 {% block title %}Подтверждение взятия | BlackIce{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
+<style>
+    .flatpickr-calendar {
+        background: #0a0a0a;
+        border: 1px solid var(--accent-color);
+        box-shadow: 0 0 20px rgba(77, 255, 0, 0.2);
+    }
+    .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange, .flatpickr-day.selected.inRange, .flatpickr-day.startRange.inRange, .flatpickr-day.endRange.inRange, .flatpickr-day.selected:focus, .flatpickr-day.startRange:focus, .flatpickr-day.endRange:focus, .flatpickr-day.selected:hover, .flatpickr-day.startRange:hover, .flatpickr-day.endRange:hover, .flatpickr-day.selected.prevMonthDay, .flatpickr-day.startRange.prevMonthDay, .flatpickr-day.endRange.prevMonthDay, .flatpickr-day.selected.nextMonthDay, .flatpickr-day.startRange.nextMonthDay, .flatpickr-day.endRange.nextMonthDay {
+        background: var(--accent-color);
+        border-color: var(--accent-color);
+        color: #000;
+        font-weight: bold;
+    }
+    .flatpickr-day:hover {
+        background: rgba(77, 255, 0, 0.2);
+        border-color: var(--accent-color);
+    }
+    .flatpickr-months .flatpickr-month {
+        color: var(--accent-color);
+        fill: var(--accent-color);
+    }
+    .flatpickr-current-month .flatpickr-monthDropdown-months {
+        background: #0a0a0a;
+    }
+    .flatpickr-weekday {
+        color: #fff;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container" style="padding-top: 100px; max-width: 600px;">
     <div class="card">
@@ -19,6 +51,18 @@
 
         <form method="POST">
             {% csrf_token %}
+            
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label for="return_date" style="display: block; margin-bottom: 10px; color: #fff;">Дата возврата:</label>
+                <div style="display: flex; gap: 10px;">
+                    <button type="button" id="calendar-btn" class="hero-btn" style="padding: 10px 15px; font-size: 1.2rem;">📅</button>
+                    <input type="text" name="return_date" id="return_date" required 
+                        value="{{ default_return_date }}"
+                        style="flex: 1; background: #050505; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 4px; font-family: 'Orbitron', sans-serif; letter-spacing: 1px;"
+                        placeholder="Выберите дату...">
+                </div>
+            </div>
+
             <div class="form-group" style="margin-bottom: 20px;">
                 <label for="purpose" style="display: block; margin-bottom: 10px; color: #fff;">Цель использования:</label>
                 <textarea name="purpose" id="purpose" rows="4" required 
@@ -33,4 +77,25 @@
         </form>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/ru.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const fp = flatpickr("#return_date", {
+            locale: "ru",
+            dateFormat: "Y-m-d",
+            minDate: "today",
+            defaultDate: "{{ default_return_date }}",
+            disableMobile: "true", // Force custom calendar on mobile too
+            theme: "dark"
+        });
+
+        document.getElementById('calendar-btn').addEventListener('click', function() {
+            fp.open();
+        });
+    });
+</script>
 {% endblock %}

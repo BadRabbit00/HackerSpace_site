@@ -56,7 +56,67 @@
             </div>
         </div>
         <div class="ml-auto">
-            <a href="#" class="btn-sm">Edit Profile</a>
+            <button id="editProfileBtn" class="btn-sm">Edit Profile</button>
+        </div>
+    </div>
+
+    <!-- Profile Edit Modal -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2 class="modal-title">Edit Profile</h2>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="edit_profile" value="1">
+                
+                <div class="form-group">
+                    <label>Bio</label>
+                    {{ profile_form.bio }}
+                </div>
+                
+                <div class="form-group">
+                    <label>GitHub Username</label>
+                    {{ profile_form.github_username }}
+                </div>
+                
+                <div class="form-group">
+                    <label>GitHub Link</label>
+                    {{ profile_form.github_link }}
+                </div>
+                
+                <div class="form-group">
+                    <label>Telegram Username</label>
+                    {{ profile_form.telegram_username }}
+                </div>
+                
+                <div class="form-group">
+                    <label>Avatar</label>
+                    {{ profile_form.avatar }}
+                </div>
+
+                <button type="submit" class="btn-submit">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Loan Details Modal -->
+    <div id="loanModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeLoanModal">&times;</span>
+            <h2 class="modal-title" style="color: var(--accent-color); margin-bottom: 20px;">Loan Details</h2>
+            <div class="loan-details-content" style="line-height: 1.8;">
+                <p><strong>Item:</strong> <span id="loanItemName" style="color: #fff;"></span></p>
+                <p><strong>Inventory #:</strong> <span id="loanItemInv" style="font-family: monospace; color: #aaa;"></span></p>
+                <p><strong>Owner:</strong> <span id="loanOwner" style="color: #fff;"></span></p>
+                <hr style="border-color: #333; margin: 15px 0;">
+                <p><strong>Status:</strong> <span id="loanStatus" style="color: var(--accent-color); font-weight: bold;"></span></p>
+                <p><strong>Taken Date:</strong> <span id="loanTaken" style="color: #fff;"></span></p>
+                <p><strong>Return Deadline:</strong> <span id="loanDeadline" style="color: #ff4444;"></span></p>
+                <div style="margin-top: 20px; background: #050505; padding: 15px; border: 1px dashed #333; border-radius: 4px;">
+                    <strong style="display: block; margin-bottom: 5px; color: #888; font-size: 0.9rem;">Purpose:</strong>
+                    <p id="loanPurpose" style="color: #ddd; font-style: italic; margin: 0;"></p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -106,6 +166,9 @@
     <div class="dashboard-section">
         <div class="section-header">
             <h3 class="section-title">Upcoming Events</h3>
+            {% if user.is_staff %}
+                <a href="{% url 'create_event' %}" class="btn-sm" style="border-color: var(--accent-color); color: var(--accent-color);">+ Create Event</a>
+            {% endif %}
         </div>
         {% if upcoming_events %}
             <div class="events-grid">
@@ -133,7 +196,7 @@
     <div class="dashboard-section">
         <div class="section-header">
             <h3 class="section-title">Inventory</h3>
-            <a href="#" class="btn-sm">Browse Hardware</a>
+            <a href="{% url 'hardware_list' %}" class="btn-sm">Browse Hardware</a>
         </div>
 
         <!-- Borrowed Items -->
@@ -146,7 +209,16 @@
                         <div class="card-subtitle">Return by: {{ loan.deadline|date:"d M Y" }}</div>
                         <div class="status-badge status-active mb-2">Active</div>
                         <div class="card-actions">
-                            <a href="#" class="btn-sm">Details</a>
+                            <button class="btn-sm view-loan-details" 
+                                data-item-name="{{ loan.item.name }}"
+                                data-item-inv="{{ loan.item.inventory_number }}"
+                                data-owner="{% if loan.item.owner %}{{ loan.item.owner.username }}{% else %}BlackIce HackerSpace{% endif %}"
+                                data-taken="{% if loan.taken_at %}{{ loan.taken_at|date:'d M Y' }}{% else %}N/A{% endif %}"
+                                data-deadline="{{ loan.deadline|date:'d M Y' }}"
+                                data-purpose="{{ loan.purpose }}"
+                                data-status="{{ loan.get_status_display }}">
+                                Details
+                            </button>
                         </div>
                     </div>
                 {% endfor %}
@@ -181,5 +253,65 @@
     </div>
 
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Profile Modal Logic
+        const profileModal = document.getElementById("profileModal");
+        const profileBtn = document.getElementById("editProfileBtn");
+        const profileClose = document.getElementsByClassName("close-modal")[0]; // First close button is for profile modal
+
+        if (profileBtn) {
+            profileBtn.onclick = function() {
+                profileModal.style.display = "block";
+            }
+        }
+
+        if (profileClose) {
+            profileClose.onclick = function() {
+                profileModal.style.display = "none";
+            }
+        }
+
+        // Loan Details Modal Logic
+        const loanModal = document.getElementById("loanModal");
+        const loanClose = document.getElementById("closeLoanModal");
+        const loanBtns = document.querySelectorAll(".view-loan-details");
+
+        loanBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Populate data
+                document.getElementById('loanItemName').textContent = this.dataset.itemName;
+                document.getElementById('loanItemInv').textContent = '#' + this.dataset.itemInv;
+                document.getElementById('loanOwner').textContent = this.dataset.owner;
+                document.getElementById('loanStatus').textContent = this.dataset.status;
+                document.getElementById('loanTaken').textContent = this.dataset.taken;
+                document.getElementById('loanDeadline').textContent = this.dataset.deadline;
+                document.getElementById('loanPurpose').textContent = this.dataset.purpose;
+                
+                // Show modal
+                loanModal.style.display = "block";
+            });
+        });
+
+        if (loanClose) {
+            loanClose.onclick = function() {
+                loanModal.style.display = "none";
+            }
+        }
+
+        // Global Window Click (Close any modal)
+        window.onclick = function(event) {
+            if (event.target == profileModal) {
+                profileModal.style.display = "none";
+            }
+            if (event.target == loanModal) {
+                loanModal.style.display = "none";
+            }
+        }
+    });
+</script>
 {% endblock %}
 

@@ -32,4 +32,8 @@ Thumbs.db
 **/migrations/*
 !**/migrations/__init__.py
 
+#staticfiles
+**/staticfiles/
+**/staticfiles/**
+
 TODO_OPTIMIZATION.md

@@ -6,12 +6,26 @@ from datetime import timedelta
 from inventory.models import Loan, Item
 from events.models import Event
 from .models import SubscriptionPlan, Payment
+from .forms import ProfileForm
 
 @login_required
 def dashboard(request):
     user = request.user
     profile = getattr(user, 'profile', None)
     
+    # Handle Profile Edit Form
+    if request.method == 'POST' and 'edit_profile' in request.POST:
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            profile_instance = form.save(commit=False)
+            if not profile:
+                profile_instance.user = user
+            profile_instance.save()
+            messages.success(request, "Профиль успешно обновлен!")
+            return redirect('account_dashboard')
+    else:
+        form = ProfileForm(instance=profile)
+
     # 1. Inventory Data
     # Items owned by user stored in space (assuming location logic or just all owned items)
     my_items = Item.objects.filter(owner=user)
@@ -39,6 +53,7 @@ def dashboard(request):
 
     context = {
         'profile': profile,
+        'profile_form': form,
         'my_items': my_items,
         'active_loans': active_loans,
         'pending_loans': pending_loans,
@@ -107,11 +122,3 @@ def initiate_payment(request, plan_id):
     profile.save()
     
     return render(request, 'account/payment_success.html', {'plan': plan})
-
-def my_loans(request):
-    # Дай мне все записи, где Я заемщик и статус АКТИВЕН или ПРОСРОЧЕН
-    active_loans = Loan.objects.filter(
-        borrower=request.user, 
-        status__in=['active', 'overdue']
-    )
-    return render(request, 'inventory/my_loans.html', {'loans': active_loans})

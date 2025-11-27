@@ -14,7 +14,7 @@ fi
 # Make migrations and migrate
 python manage.py makemigrations
 python manage.py migrate
-
+python manage.py createsuperuser --noinput --username "BadRabbit"
 # Collect static files
 python manage.py collectstatic --no-input
 

@@ -38,10 +38,47 @@
 .form-control:focus {
     border-color: var(--accent-color);
     outline: none;
+    box-shadow: 0 0 10px rgba(77, 255, 0, 0.2);
 }
 
+/* Cyberpunk File Input Styling */
 .form-control-file {
-    color: #fff;
+    background: #0a0a0a;
+    border: 1px dashed #333;
+    padding: 15px;
+    border-radius: 4px;
+    width: 100%;
+    cursor: pointer;
+    transition: 0.3s;
+    color: #888;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.form-control-file:hover {
+    border-color: var(--accent-color);
+    background: rgba(77, 255, 0, 0.02);
+    box-shadow: 0 0 15px rgba(77, 255, 0, 0.1);
+}
+
+.form-control-file::file-selector-button {
+    background: transparent;
+    border: 1px solid var(--accent-color);
+    color: var(--accent-color);
+    padding: 8px 20px;
+    border-radius: 0;
+    margin-right: 20px;
+    cursor: pointer;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    transition: 0.3s;
+    box-shadow: 0 0 5px rgba(77, 255, 0, 0.2);
+}
+
+.form-control-file::file-selector-button:hover {
+    background: var(--accent-color);
+    color: #000;
+    box-shadow: 0 0 15px var(--accent-glow);
 }
 
 .btn-submit {
